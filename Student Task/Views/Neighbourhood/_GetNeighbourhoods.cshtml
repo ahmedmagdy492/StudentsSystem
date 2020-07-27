@@ -1,0 +1,15 @@
+﻿@using Student_Task.Models
+@model IEnumerable<Neighborhood>
+
+
+<div class="form-group">
+    <div class="control-label">
+        Neighborhood
+    </div>
+    <select name="Student.NeighborhoodId" class="form-control">
+        @foreach(var n in Model)
+        {
+            <option value="@n.ID">@n.Name</option>
+        }
+    </select>
+</div>

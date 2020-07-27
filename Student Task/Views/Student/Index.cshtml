@@ -1,0 +1,97 @@
+﻿@using Student_Task.Models
+@using PagedList
+@using PagedList.Mvc
+@model IPagedList<Student>
+
+@{
+    ViewBag.Title = "Students";
+}
+
+<div class="container-fluid margin-top-3">
+    @Html.ActionLink("Create Student", "Create", "Student")
+    @if (Model.Count() > 0)
+    {
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>BirthDate</th>
+                    <th>Field</th>
+                    <th>Neighborhood</th>
+                    <th>Governrate</th>
+                    <th colspan="2">Operations</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var student in Model)
+                {
+                    <tr>
+                        <td>@student.Name</td>
+                        <td>@student.BirthDate</td>
+                        <td>@student.Field.Name</td>
+                        <td>@student.Neighborhood.Name</td>
+                        <td>@student.Governorate.Name</td>
+                        <td>
+                            <a onclick="showDelModal(event, @student.ID)" style="cursor: pointer">Delete</a>
+                        </td>
+                        <td>
+                            @Html.ActionLink("Edit", "Edit", "Student", new { id = student.ID }, new { @class = "text-primary" })
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        @Html.PagedListPager(Model, i => Url.Action("Index", "Student", new { i }))
+    }
+    else
+    {
+        <h3 class="text-center">No Students Data Yet</h3>
+    }
+</div>
+
+
+
+<!-- delete student modal -->
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Delete Confirmation</h4>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this record ?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="delStudent()">Confirm</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+@section Scripts{
+    <script>
+        let id = 0;
+        let record = null;
+        function showDelModal(event, stId) {
+            record = event.target.parentElement.parentElement;
+            id = parseInt(stId);
+            $("#myModal").modal();
+        }
+        function delStudent() {
+            $.ajax({
+                url: `/Student/Delete?id=${id}`,
+                type: "Post",
+                success: function () {
+                    record.remove();
+                }
+            })
+        }
+    </script>
+}

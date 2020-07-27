@@ -1,0 +1,90 @@
+﻿@using Student_Task.ViewModels
+@model StudentViewModel
+@{
+    ViewBag.Title = "Create";
+}
+
+<div class="container-fluid margin-top-3 center-block">
+    <div class="text-left">
+        @Html.ActionLink("Back", "Index", "Student")
+    </div>
+
+    <div>
+        <h3>Create New Student</h3>
+
+        @using (Html.BeginForm("Create", "Student", FormMethod.Post, new { @class = "text-center" }))
+        {
+            <div class="form-group">
+                <div class="control-label">
+                    Name
+                </div>
+                <input data-val="true" data-val-required="Name is required" name="Student.Name" type="text" class="form-control" />
+            </div>
+            <div class="form-group">
+                <div data-val="true" class="control-label">
+                    BirthDate
+                </div>
+                <input name="Student.BirthDate" data-val="true" data-val-required="Birthdate is required" type="date" class="form-control" />
+            </div>
+            <div class="form-group">
+                <div class="control-label">
+                    Field
+                </div>
+                <select name="Student.FieldId" class="form-control">
+                    @foreach (var option in Model.Fields)
+                    {
+                        <option value="@option.Value">@option.Text</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <div class="control-label">
+                    Governrate
+                </div>
+                <select name="Student.GovernorateId" class="form-control" onchange="getNeighbs(event)">
+                    @foreach (var option in Model.Governorates)
+                    {
+                        <option value="@option.Value">@option.Text</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group" id="nContainer">
+                <div class="control-label">
+                    Neighborhood
+                </div>
+                <select name="Student.NeighborhoodId" class="form-control">
+                    @foreach (var option in Model.Neighborhoods)
+                    {
+                        <option value="@option.Value">@option.Text</option>
+                    }
+                </select>
+            </div>
+            <div>
+                <button type="submit" class="btn btn-primary">Create</button>
+            </div>
+
+            <div class="container-fluid margin-top-3">
+                <ul class="text-left text-danger">
+                    @Html.ValidationSummary()
+                </ul>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        function getNeighbs(event)
+        {
+            const idValue = event.target.value;
+            const container = document.getElementById("nContainer");
+            $.ajax({
+                url: `/Neighbourhood/Index?govId=${parseInt(idValue)}`,
+                type: "GET",
+                success: function (res) {
+                    container.innerHTML = res;
+                }
+            })
+        }
+    </script>    
+}

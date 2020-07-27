@@ -1,0 +1,69 @@
+﻿@using Student_Task.ViewModels
+@model StudentViewModel
+@{
+    ViewBag.Title = "Edit Student";
+}
+
+
+<div class="container-fluid margin-top-3 center-block">
+    <div class="text-left">
+        @Html.ActionLink("Back", "Index", "Student")
+    </div>
+
+    <div>
+        <h3>Edit Student</h3>
+
+        @using (Html.BeginForm("Edit", "Student", FormMethod.Post, new { @class = "text-center" }))
+        {
+            <div class="form-group">
+                <div class="control-label">
+                    Name
+                </div>
+                <input data-val="true" data-val-required="Name is required" value="@Model.Student.Name" name="Student.Name" type="text" class="form-control" />
+            </div>
+            <div class="form-group">
+                <div class="control-label">
+                    Field
+                </div>
+                @Html.DropDownList("Student.FieldId", Model.Fields, new { @class = "form-control" })
+            </div>
+            <div class="form-group">
+                <div class="control-label">
+                    Governrate
+                </div>
+                @Html.DropDownList("Student.GovernorateId", Model.Governorates, new { @class = "form-control", onchange= "getNeighbs(event)" })
+            </div>
+            <div class="form-group" id="nContainer">
+                <div class="control-label">
+                    Neighborhood
+                </div>
+                @Html.DropDownList("Student.NeighborhoodId", Model.Neighborhoods, new { @class="form-control" })
+            </div>
+            <div>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+            <div class="container-fluid margin-top-3">
+                <ul class="text-left text-danger">
+                    @Html.ValidationSummary()
+                </ul>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        function getNeighbs(event) {
+            const idValue = event.target.value;
+            const container = document.getElementById("nContainer");
+            $.ajax({
+                url: `/Neighbourhood/Index?govId=${parseInt(idValue)}`,
+                type: "GET",
+                success: function (res) {
+                    container.innerHTML = res;
+                }
+            })
+        }
+    </script>
+}
+
